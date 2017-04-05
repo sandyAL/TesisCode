@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
-
+using System.Diagnostics;
 public class DataReceived : MonoBehaviour {
 
     //Public GameObjects
@@ -40,7 +40,11 @@ public class DataReceived : MonoBehaviour {
     float differenceDistance;
     float tempAngle;
     //public int speed = 20;
-    
+    /*
+    DEBUG
+    */
+    Stopwatch timeDataReceived;
+
     void Start()
     {
         //Initialice data receiver
@@ -50,11 +54,13 @@ public class DataReceived : MonoBehaviour {
         Head = globalDef.GetComponent<globalDefinitions> ().Head;
         HeadCamera = globalDef.GetComponent<globalDefinitions> ().HeadCamera;
         samplePositions = new Vector3[3, constant.windowSize];
+        timeDataReceived = new Stopwatch();
     }
 
     // Packet received
     void OnPacketReceived(object sender, string Packet)
     {
+        //timeDataReceived = Stopwatch.StartNew(); //.Reset() .StartNew();
         //Update de index for the sample array
         positionOnSampleArray = (positionOnSampleArray + 1) % constant.windowSize;
         
@@ -197,11 +203,14 @@ public class DataReceived : MonoBehaviour {
                 currentStatus.angleMovement[(int)Hand.Left] = 0;
             }
             //handsController.GetComponent<HandsController>().currentStatus = currentStatus;
-            Debug.Log("Movement");
-            UpdateHandsStatus(this, currentStatus);
+            //Debug.Log("Movement");
+            //UpdateHandsStatus(this, currentStatus);
             sendUpdate = false;
         }
-            
+        UpdateHandsStatus(this, currentStatus);
+        //timeDataReceived.Stop();
+
+        //UnityEngine.Debug.Log(timeDataReceived.Elapsed);
     }
 
     // Update is called once per frame

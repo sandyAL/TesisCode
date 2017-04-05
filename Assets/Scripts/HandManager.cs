@@ -11,11 +11,12 @@ public class HandManager : MonoBehaviour {
 	
     public void changeMaterial(Material newMaterial)
     {
-        int numChildren = this.transform.childCount;
+        GameObject hand = this.transform.GetChild(0).gameObject;
+        int numChildren = hand.transform.childCount;
         int numC;
         for (int k = 0; k < numChildren; k += 1)
         {
-            Transform child = this.transform.GetChild(k);
+            Transform child = hand.transform.GetChild(k);
             child.gameObject.GetComponent<Renderer>().material = newMaterial;
             numC = child.transform.childCount;
             for (int i = 0; i < numC; i += 1)
@@ -24,6 +25,7 @@ public class HandManager : MonoBehaviour {
                 grandChild.gameObject.GetComponent<Renderer>().material = newMaterial;
             }
         }
+        
     }
 
 

@@ -4,15 +4,23 @@ using System.Collections;
 
 enum MaterialColors : int {
     White = 0,
-    Blue,
-    Brown,
-    Cyan,
-    Green,
-    Orange,
-    Purple,
-    Red,
-    Silver,
-    Yellow
+    Blue = 1,
+    Brown =2,
+    Cyan = 3,
+    Green =4,
+    Orange =5,
+    Purple = 6,
+    Red =7,
+    Silver =8,
+    Yellow = 9,
+    LightBlue = 10,
+    LightBrown = 2,
+    LightCyan = 3,
+    LightGreen = 4,
+    LightOrange = 5,
+    LightPurple = 6,
+    LightRed = 7,
+    LightYellow = 9,
 };
  
 
@@ -24,9 +32,9 @@ public struct Threshold
     public const double limSuperiorDistance = 0.01;
     public const int angleOneHand =40;
     public const int angleTwoHands = 30;
-    public const int direction = 45;
-    public const int centerAnglePush = 277;
-    public const int centerAnglePull = 260; //TODO calculate
+    public const int moveDirection = 45;
+    public const int centerAnglePushZ = 277;
+    public const int centerAnglePullZ = 260; //TODO calculate
     public const int centerAngleBouth = 0; //TODO calculate
 }
 
