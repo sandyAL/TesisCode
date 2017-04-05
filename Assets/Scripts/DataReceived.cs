@@ -11,6 +11,7 @@ public class DataReceived : MonoBehaviour {
     GameObject Head;
     GameObject[] Hands;
     GameObject HeadCamera;
+    //public GameObject handsController;
         
     // Default variables
     int numHands = 2;
@@ -46,8 +47,8 @@ public class DataReceived : MonoBehaviour {
         SlipStreamObject.GetComponent<SlipStream>().PacketNotification += new PacketReceivedHandler(OnPacketReceived);
         globalDef = GameObject.Find("GlobalDefinitions");
         Hands = globalDef.GetComponent<globalDefinitions>().Hands;
-        Head = globalDef.GetComponent<globalDefinitions>().Head;
-        HeadCamera = globalDef.GetComponent<globalDefinitions>().HeadCamera;
+        Head = globalDef.GetComponent<globalDefinitions> ().Head;
+        HeadCamera = globalDef.GetComponent<globalDefinitions> ().HeadCamera;
         samplePositions = new Vector3[3, constant.windowSize];
     }
 
@@ -78,9 +79,10 @@ public class DataReceived : MonoBehaviour {
             float qz = (float)System.Convert.ToDouble(rigidBodiesList[k].Attributes["qz"].InnerText);
             float qw = (float)System.Convert.ToDouble(rigidBodiesList[k].Attributes["qw"].InnerText);
             newOrientation = new Quaternion(qx, -qy, -qz, qw);
-                       
+              
+            //VARIANCE
+            //Calculate the variance from the last windowSize frames         
             averagePosition[k] = averagePosition[k] + (newPosition - oldPosition) / constant.windowSize;
-            
             samplePositions[k, positionOnSampleArray] = newPosition;
             sampleVariance = 0.0;
             for (int i = 0; i < constant.windowSize; i += 1)
@@ -96,30 +98,31 @@ public class DataReceived : MonoBehaviour {
             //UPDATE current status
             currentStatus.handPosition[k] = newPosition;
             currentStatus.handRotation[k] = newOrientation.eulerAngles;
-            
-            //TODO revisar este codigo  
-            //TODO delete sendUpdate
+
             //UPDATE Hand moving
-            if (sampleVariance > Threshold.limInferiorVariance && !currentStatus.handMoving[k])
+            
+            if (sampleVariance > Threshold.limInferiorVariance)
             {
-                if (currentStatus.handMoving[k])
+                //hand is now moving
+                if (!currentStatus.handMoving[k])
                 {
-                    currentStatus.handMoving[k] = false;
-                    sendUpdate = true;// FALSE
+                    //hand wasnt moving
+                    currentStatus.handMoving[k] = true;
                     countFramesEquals = 0;
+                    sendUpdate = true;
                 }
             }
             else
-               //Se esta moviendo
             {
-                if (!currentStatus.handMoving[k])
-               {
-                   currentStatus.handMoving[k] = true;
-                   countFramesEquals = 0;
-                   sendUpdate = true;
-               }
-             }
-            
+                //hand is not moving
+                if(currentStatus.handMoving[k])
+                {
+                    //hand was moving
+                    currentStatus.handMoving[k] = false;
+                    countFramesEquals = 0;
+                    sendUpdate = true;
+                }
+            }
         }
         countFramesEquals += 1;
 
@@ -193,11 +196,12 @@ public class DataReceived : MonoBehaviour {
                 currentStatus.handDirection[(int)Hand.Left] = Vector3.zero;
                 currentStatus.angleMovement[(int)Hand.Left] = 0;
             }
-
+            //handsController.GetComponent<HandsController>().currentStatus = currentStatus;
+            Debug.Log("Movement");
             UpdateHandsStatus(this, currentStatus);
             sendUpdate = false;
         }
-
+            
     }
 
     // Update is called once per frame
