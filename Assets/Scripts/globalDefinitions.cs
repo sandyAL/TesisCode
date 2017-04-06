@@ -33,8 +33,8 @@ public struct Threshold
     public const int angleOneHand =40;
     public const int angleTwoHands = 30;
     public const int moveDirection = 45;
-    public const int centerAnglePushZ = 277;
-    public const int centerAnglePullZ = 260; //TODO calculate
+    public const int centerAnglePushZ = 315;
+    public const int centerAnglePullZ = 240; //TODO calculate
     public const int centerAngleBouth = 0; //TODO calculate
 }
 
