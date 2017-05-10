@@ -9,18 +9,23 @@ enum MaterialColors : int {
     Cyan = 3,
     Green =4,
     Orange =5,
+    Pink = 20,
     Purple = 6,
     Red =7,
     Silver =8,
     Yellow = 9,
-    LightBlue = 10,
-    LightBrown = 2,
-    LightCyan = 3,
-    LightGreen = 4,
-    LightOrange = 5,
-    LightPurple = 6,
-    LightRed = 7,
-    LightYellow = 9,
+    MateWhite = 10,
+    MateBlue = 11,
+    MateBrown = 12,
+    MateCyan = 13,
+    MateGreen = 14,
+    MateOrange = 15,
+    MatePink = 21,
+    MatePurple = 16,
+    MateRed = 17,
+    MateSilver = 18,
+    MateYellow = 19,
+
 };
  
 
@@ -33,7 +38,7 @@ public struct Threshold
     public const int angleOneHand =40;
     public const int angleTwoHands = 30;
     public const int moveDirection = 45;
-    public const int centerAnglePushZ = 315;
+    public const int centerAnglePushZ = 305;
     public const int centerAnglePullZ = 240; //TODO calculate
     public const int centerAngleBouth = 0; //TODO calculate
 }
@@ -49,13 +54,16 @@ public struct constant
 
 
 public delegate void ChangeHandsStatusHandler(object sender, HandStatus handStatus);
-
+public delegate void idDetectedMovementHandler(object sender, int idMoveDetected);
 
 public class globalDefinitions : MonoBehaviour {
     public GameObject Head;
     public GameObject HeadCamera;
+    public GameObject Target;
     public GameObject[] Hands = new GameObject[2];
-    public Material[] materials =new Material[10];
+    public HandStatus currentHandStatus;
+    public Material[] materials =new Material[20];
+    public GameObject selectedObject;
     public string selectedObjectName = "";
     // Use this for initialization
     void Start () {

@@ -136,7 +136,10 @@
     <Compile Include="Assets\Scripts\DataReceived.cs" />
     <Compile Include="Assets\Scripts\HandManager.cs" />
     <Compile Include="Assets\Scripts\HandsController.cs" />
+    <Compile Include="Assets\Scripts\MoveAction.cs" />
+    <Compile Include="Assets\Scripts\Selector.cs" />
     <Compile Include="Assets\Scripts\SlipStream.cs" />
+    <Compile Include="Assets\Scripts\TargetObject.cs" />
     <Compile Include="Assets\Scripts\globalDefinitions.cs" />
   </ItemGroup>
   <ItemGroup>

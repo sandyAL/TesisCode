@@ -95,9 +95,11 @@ public class HandsController : MonoBehaviour {
     float limSuperiorPushAngleZ = Threshold.centerAnglePushZ + Threshold.angleOneHand;
     float limInferiorPullAngleZ = Threshold.centerAnglePullZ - Threshold.angleOneHand;
     float limSuperiorPullAngleZ = Threshold.centerAnglePullZ + Threshold.angleOneHand;
-
     //public float limInferiorPullAngleZ ;
     //public float limSuperiorPullAngleZ ;
+
+    //Events
+    public event idDetectedMovementHandler UpdateIdDetected;
 
     // Use this for initialization
     void Start ()
@@ -110,10 +112,10 @@ public class HandsController : MonoBehaviour {
 
     public void getRightRotationType ()
     {
-        Debug.Log(newStatus.handRotation[(int)Hand.Right].y.ToString()+" : "+ newStatus.angleNormal.ToString());
-        bool orientationYPos = newStatus.handRotation[(int)Hand.Right].y<180;
-        bool angleNormalPos = newStatus.angleNormal < 180;
-        if (newStatus.handRotation[(int)Hand.Right].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < limSuperiorPushAngleZ && (orientationYPos == !angleNormalPos))
+        bool orientationYPos = newStatus.handRotation[(int)Hand.Right].y > 270 || newStatus.handRotation[(int)Hand.Right].y < 90;
+        bool angleNormalPos = newStatus.angleNormal > 0;
+        
+        if (newStatus.handRotation[(int)Hand.Right].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < limSuperiorPushAngleZ && (orientationYPos =! angleNormalPos))
         {
             handTypePosition[(int)Hand.Right] = (int)HandRotationType.Push;
             return;
@@ -133,18 +135,17 @@ public class HandsController : MonoBehaviour {
 
     public void getLeftRotationType()
     {
-        bool orientationYPos = newStatus.handRotation[(int)Hand.Left].y < 180;
-        bool angleNormalPos = newStatus.angleNormal < 180;
-        if (newStatus.handRotation[(int)Hand.Left].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Left].z < limSuperiorPushAngleZ)
+        bool orientationYPos = newStatus.handRotation[(int)Hand.Left].y > 270 || newStatus.handRotation[(int)Hand.Left].y < 90;
+        bool angleNormalPos = newStatus.angleNormal > 0;
+
+        if (newStatus.handRotation[(int)Hand.Left].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Left].z < limSuperiorPushAngleZ && (orientationYPos =! angleNormalPos))
         {
-            if (orientationYPos == !angleNormalPos)
-            {
-                handTypePosition[(int)Hand.Left] = (int)HandRotationType.Push;
-            }
-            else
-            {
-                handTypePosition[(int)Hand.Left] = (int)HandRotationType.Pull;
-            }
+            handTypePosition[(int)Hand.Left] = (int)HandRotationType.Push;
+            return;
+        }
+        if (newStatus.handRotation[(int)Hand.Left].z > limInferiorPullAngleZ && newStatus.handRotation[(int)Hand.Left].z < limSuperiorPullAngleZ && (orientationYPos == angleNormalPos))
+        {
+            handTypePosition[(int)Hand.Left] = (int)HandRotationType.Pull;
             return;
         }
         /* //TODO add two hands type rotation
@@ -164,22 +165,33 @@ public class HandsController : MonoBehaviour {
             //Debug.Log(idMoveDetected.ToString());
             switch (idMoveDetected)
             {
+                //case (int)HandMoves.RightHandPush:
+                //case (int)HandMoves.RightHandPull:
+                //case (int)HandMoves.LeftHandPush:
+                //case (int)HandMoves.LeftHandPull:
                 case (int)HandMoves.None:
                 case (int)HandMoves.ZoomIn:
                 case (int)HandMoves.ZoomOut:
                 case (int)HandMoves.Traslate:
+                
                     {
                         return materials[(int)MaterialColors.Silver];
                     }
+                
+                   
+                //Debug not moving
+                
                 case (int)HandMoves.RightHandPush:
                     {
                         //Debug.Log("Push");
                         return materials[(int)MaterialColors.Blue];
                     }
+                
                 case (int)HandMoves.RightHandPull:
                     {
                         return materials[(int)MaterialColors.Cyan];
                     }
+                
                 case (int)HandMoves.LeftHandPush:
                     {
                         return materials[(int)MaterialColors.Red];
@@ -188,30 +200,37 @@ public class HandsController : MonoBehaviour {
                     {
                         return materials[(int)MaterialColors.Orange];
                     }
-
+                    
             }
         }
         else
         {
             //Debug.Log("Not moving");
             //Debug.Log(handTypePosition[(int)Hand.Right].ToString() + " : " + handTypePosition[(int)Hand.Left].ToString());
-            if (handTypePosition[(int)Hand.Right]== (int)HandRotationType.Push  && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
-                return materials[(int)MaterialColors.Red];
-                //return materials[(int)MaterialColors.LightBlue];
-                if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Pull && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
-                    return materials[(int)MaterialColors.Green];
-                    //return materials[(int)MaterialColors.LightCyan];
-                if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.None && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.Push))
-                    return materials[(int)MaterialColors.Silver];
-                    //return materials[(int)MaterialColors.LightRed];
-                if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.None && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.Pull))
-                    return materials[(int)MaterialColors.Silver];
-                    //return materials[(int)MaterialColors.LightOrange];
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Push && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
+            {
+                return materials[(int)MaterialColors.MateBlue];
+            }
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Pull && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
+            {
+                return materials[(int)MaterialColors.MateCyan];
+            }
+
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.None && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.Push))
+            {
+                return materials[(int)MaterialColors.MateRed];
+            }
+
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.None && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.Pull))
+            {
+                return materials[(int)MaterialColors.MateOrange];
+            }
+            return materials[(int)MaterialColors.MateWhite];        
         }
-        return materials[(int)MaterialColors.Silver];
+        return materials[(int)MaterialColors.White];
     }
     
-    public void detectMove()
+    public void detectMove() 
     {
         moveDetected = false;
         //idMoveDetected = (int)HandMoves.None;
@@ -220,7 +239,7 @@ public class HandsController : MonoBehaviour {
         {
             //TODO Add two hands detectiono move
             moveDetected = true;
-            return;
+            idMoveDetected = (int) HandMoves.None;
         }
 
         // RIGHT HAND
@@ -233,7 +252,7 @@ public class HandsController : MonoBehaviour {
                 {
                     case (int)HandRotationType.Push:
                         {
-                            if (newStatus.angleMovement[(int)Hand.Right] > (360 - Threshold.moveDirection) &&
+                            if (newStatus.angleMovement[(int)Hand.Right] > (360 - Threshold.moveDirection) ||
                                newStatus.angleMovement[(int)Hand.Right] < (0 + Threshold.moveDirection))
                                {
                                    idMoveDetected = (int)HandMoves.RightHandPush;
@@ -242,7 +261,7 @@ public class HandsController : MonoBehaviour {
                         }
                     case (int)HandRotationType.Pull:
                         {
-                            if (newStatus.angleMovement[(int)Hand.Right] > (180 - Threshold.moveDirection) ||
+                            if (newStatus.angleMovement[(int)Hand.Right] > (180 - Threshold.moveDirection) &&
                                 newStatus.angleMovement[(int)Hand.Right] < (180 + Threshold.moveDirection))
                               {
                                 idMoveDetected = (int)HandMoves.RightHandPull;
@@ -257,7 +276,6 @@ public class HandsController : MonoBehaviour {
                 }
             }
             
-            return;
         }
 
         //LEFT HAND
@@ -270,8 +288,8 @@ public class HandsController : MonoBehaviour {
                 {
                     case (int)HandRotationType.Push:
                         {
-                            if (newStatus.angleMovement[(int)Hand.Left] > (180 - Threshold.moveDirection) &&
-                               newStatus.angleMovement[(int)Hand.Left] < (180 + Threshold.moveDirection))
+                            if (newStatus.angleMovement[(int)Hand.Left] > (360 - Threshold.moveDirection) ||
+                               newStatus.angleMovement[(int)Hand.Left] < (0 + Threshold.moveDirection))
                             {
                                 idMoveDetected = (int)HandMoves.LeftHandPush;
                             }
@@ -279,8 +297,8 @@ public class HandsController : MonoBehaviour {
                         }
                     case (int)HandRotationType.Pull:
                         {
-                            if (newStatus.angleMovement[(int)Hand.Left] > (360 - Threshold.moveDirection) ||
-                                   newStatus.angleMovement[(int)Hand.Left] < (0 + Threshold.moveDirection))
+                            if (newStatus.angleMovement[(int)Hand.Left] > (180 - Threshold.moveDirection) &&
+                                newStatus.angleMovement[(int)Hand.Left] < (180 + Threshold.moveDirection))
                             {
                                 idMoveDetected = (int)HandMoves.LeftHandPull;
                             }
@@ -293,28 +311,28 @@ public class HandsController : MonoBehaviour {
 
                 }
             }
-            return;
         }
+        UpdateIdDetected(this, idMoveDetected);
     }
     /*
     DEBUG
     */
     private void OnUpdatedHandsStatusReceived(object sender, HandStatus newHandStatus)
     {
+        globalDef.GetComponent<globalDefinitions>().currentHandStatus = newHandStatus;
         oldStatus = newStatus;
         newStatus = newHandStatus;
         getRightRotationType();
         getLeftRotationType();
         detectMove();
-        //Debug.Log(handTypePosition[0].ToString()+" "+ handTypePosition[1].ToString());
-        //Debug.Log(idMoveDetected);
-        //Debug.Log("-----------------------------");
+
         Material newHandMaterial = getHandMaterial();
         if (newHandMaterial != handMaterials)
         {
             Hands[(int)Hand.Right].GetComponent<HandManager>().changeMaterial(newHandMaterial);
             Hands[(int)Hand.Left].GetComponent<HandManager>().changeMaterial(newHandMaterial);
         }
+
     }
 
     // Update is called once per frame

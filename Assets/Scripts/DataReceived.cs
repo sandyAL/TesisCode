@@ -49,10 +49,10 @@ public class DataReceived : MonoBehaviour {
     {
         //Initialice data receiver
         SlipStreamObject.GetComponent<SlipStream>().PacketNotification += new PacketReceivedHandler(OnPacketReceived);
-        globalDef = GameObject.Find("GlobalDefinitions");
+        //globalDef = GameObject.Find("GlobalDefinitions");
         Hands = globalDef.GetComponent<globalDefinitions>().Hands;
-        Head = globalDef.GetComponent<globalDefinitions> ().Head;
-        HeadCamera = globalDef.GetComponent<globalDefinitions> ().HeadCamera;
+        Head = globalDef.GetComponent<globalDefinitions>().Head;
+        HeadCamera = globalDef.GetComponent<globalDefinitions>().HeadCamera;
         samplePositions = new Vector3[3, constant.windowSize];
         timeDataReceived = new Stopwatch();
     }
@@ -175,7 +175,13 @@ public class DataReceived : MonoBehaviour {
             //TO-DO Update hand direction 
             //RIGHT HAND
             currentStatus.normal = HeadCamera.transform.forward;
-            currentStatus.angleNormal = (Mathf.Acos(Vector3.Dot(new Vector3(1, 0, 0), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI;
+            int signAngle;
+            if ((Mathf.Acos(Vector3.Dot(new Vector3(1, 0, 0), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI > 90.0)
+                signAngle = -1;
+            else
+                signAngle = 1;
+            currentStatus.angleNormal = signAngle*(Mathf.Acos(Vector3.Dot(new Vector3(0, 0, 1), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI;
+
             if (currentStatus.handMoving[(int)Hand.Right])
             {
                 currentStatus.handDirection[(int)Hand.Right] = samplePositions[(int)Hand.Right, positionOnSampleArray] - samplePositions[(int)Hand.Right, (positionOnSampleArray + 1) % constant.windowSize];
