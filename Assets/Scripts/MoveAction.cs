@@ -5,9 +5,10 @@ using UnityEngine;
 public class MoveAction : MonoBehaviour {
     public GameObject handsController;
     public GameObject globalDef;
-    public GameObject target;
-    public GameObject selector;
+    GameObject target;
+    GameObject selector;
     GameObject selectedObject;
+    string selectedObjectName;
 	// Use this for initialization
 	void Start () {
         handsController.GetComponent<HandsController>().UpdateIdDetected += new idDetectedMovementHandler(OnMoveDetectedReceived);
@@ -22,24 +23,10 @@ public class MoveAction : MonoBehaviour {
         Vector3 direction = globalDef.GetComponent<globalDefinitions>().currentHandStatus.handDirection[(int)Hand.Right].normalized;
         switch (idMoveDetected)
         {
-            case (int)HandMoves.RightHandPush:
-                {
-                    // TODO PUSH SELECTED OBJECT
-                    selectedObject = globalDef.GetComponent<globalDefinitions>().selectedObject;
-                    selectedObject.transform.position += new Vector3(direction.x/10.0F,0, direction.z/10.0F);
-                    //testObject.transform.position += direction.normalized;
-                    return;
-                }
-            case (int)HandMoves.RightHandPull:
-                {
-                    //TODO PULL SELECTED OBJECT
-                    selectedObject = globalDef.GetComponent<globalDefinitions>().selectedObject;
-                    selectedObject.transform.position += new Vector3(direction.x / 10.0F, 0, direction.z / 10.0F);
-                    return;
-                }
             case (int)HandMoves.LeftHandPush:
                 {
                     //TODO START SELECTION
+                    Debug.Log("LeftHandPush");
                     selector.GetComponent<Selector>().enabled = false;
                     target.SetActive(false);
                     return;
@@ -51,10 +38,44 @@ public class MoveAction : MonoBehaviour {
                     target.SetActive(true);
                     return;
                 }
-            case (int)HandMoves.None:
+        }
+        if (globalDef.GetComponent<globalDefinitions>().selectedObjectName == "")
+            return;
+        if (globalDef.GetComponent<globalDefinitions>().selectedObjectName != selectedObjectName)
+        {
+            selectedObjectName = globalDef.GetComponent<globalDefinitions>().selectedObjectName;
+            selectedObject = globalDef.GetComponent<globalDefinitions>().selectedObject;
+        }
+        switch (idMoveDetected)
+        {
+            case (int)HandMoves.RightHandPush:
+                {
+                    selectedObject.transform.position += new Vector3(direction.x / 50.0F, 0, direction.z / 50.0F);
+                    return;
+                }
+            case (int)HandMoves.RightHandPull:
+                {
+                    selectedObject.transform.position += new Vector3(direction.x / 20.0F, 0, direction.z / 20.0F);
+                    return;
+                }
             case (int)HandMoves.ZoomIn:
+                {
+                    selectedObject.transform.localScale = 1.01F*selectedObject.transform.localScale;
+                    return;
+                }
             case (int)HandMoves.ZoomOut:
+                {
+                    selectedObject.transform.localScale = 0.9F * selectedObject.transform.localScale;
+                    return;
+                }
             case (int)HandMoves.Traslate:
+                {
+                    if (globalDef.GetComponent<globalDefinitions>().selectedObjectName == "")
+                        return;
+
+                    return;
+                }
+            case (int)HandMoves.None:
             default:
                 {
                     break;

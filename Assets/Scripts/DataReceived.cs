@@ -147,14 +147,21 @@ public class DataReceived : MonoBehaviour {
             //TODO revisar cual de las dos instrucciones se ve mejor
             //head.transform.position = Vector3.MoveTowards(head.transform.position, position, speed * Time.deltaTime);
         }
+        //UPDATE id
+        currentStatus.id = IDStatus;
+        IDStatus += 1;
+        //UPDATE normal to the point of view
+        currentStatus.normal = HeadCamera.transform.forward;
+        int signAngle;
+        if ((Mathf.Acos(Vector3.Dot(new Vector3(1, 0, 0), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI > 90.0)
+            signAngle = -1;
+        else
+            signAngle = 1;
+        currentStatus.angleNormal = signAngle * (Mathf.Acos(Vector3.Dot(new Vector3(0, 0, 1), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI;
 
-        // Si he tenido el mismo estado por sameFrameWindowSize envio un update del estado de las manos
+        // Si he tenido el mismo estado por sameFrameWindowSize envio un actualizo el movimiento de las manos
         if (sendUpdate && countFramesEquals > constant.sameFrameWindowSize && UpdateHandsStatus != null)
         {
-            //UPDATE id
-            currentStatus.id = IDStatus;
-            IDStatus += 1;
-
             //UPDATE distance
             initialDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, (positionOnSampleArray + 1) % constant.windowSize], samplePositions[(int)Hand.Left, (positionOnSampleArray + 1) % constant.windowSize]);
             finalDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, positionOnSampleArray], samplePositions[(int)Hand.Left, positionOnSampleArray]);
@@ -174,20 +181,11 @@ public class DataReceived : MonoBehaviour {
 
             //TO-DO Update hand direction 
             //RIGHT HAND
-            currentStatus.normal = HeadCamera.transform.forward;
-            int signAngle;
-            if ((Mathf.Acos(Vector3.Dot(new Vector3(1, 0, 0), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI > 90.0)
-                signAngle = -1;
-            else
-                signAngle = 1;
-            currentStatus.angleNormal = signAngle*(Mathf.Acos(Vector3.Dot(new Vector3(0, 0, 1), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI;
-
             if (currentStatus.handMoving[(int)Hand.Right])
             {
                 currentStatus.handDirection[(int)Hand.Right] = samplePositions[(int)Hand.Right, positionOnSampleArray] - samplePositions[(int)Hand.Right, (positionOnSampleArray + 1) % constant.windowSize];
                 tempAngle = Mathf.Acos(Vector3.Dot(currentStatus.handDirection[(int)Hand.Right], currentStatus.normal) / (Vector3.Magnitude(currentStatus.handDirection[(int)Hand.Right]) * Vector3.Magnitude(currentStatus.normal)));
                 currentStatus.angleMovement[(int)Hand.Right] = (int)(tempAngle * 180 / Mathf.PI);
-
             }
             else
             {
@@ -201,22 +199,16 @@ public class DataReceived : MonoBehaviour {
                 currentStatus.handDirection[(int)Hand.Left] = samplePositions[(int)Hand.Left, positionOnSampleArray] - samplePositions[(int)Hand.Left, (positionOnSampleArray + 1) % constant.windowSize];
                 tempAngle = Mathf.Acos(Vector3.Dot(currentStatus.handDirection[(int)Hand.Left], currentStatus.normal) / (Vector3.Magnitude(currentStatus.handDirection[(int)Hand.Left]) * Vector3.Magnitude(currentStatus.normal)));
                 currentStatus.angleMovement[(int)Hand.Left] = (int)(tempAngle * 180 / Mathf.PI);
-
             }
             else
             {
                 currentStatus.handDirection[(int)Hand.Left] = Vector3.zero;
                 currentStatus.angleMovement[(int)Hand.Left] = 0;
             }
-            //handsController.GetComponent<HandsController>().currentStatus = currentStatus;
-            //Debug.Log("Movement");
-            //UpdateHandsStatus(this, currentStatus);
             sendUpdate = false;
         }
         UpdateHandsStatus(this, currentStatus);
-        //timeDataReceived.Stop();
-
-        //UnityEngine.Debug.Log(timeDataReceived.Elapsed);
+        
     }
 
     // Update is called once per frame

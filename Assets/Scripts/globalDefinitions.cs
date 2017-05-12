@@ -1,5 +1,9 @@
-﻿using UnityEngine;
+﻿
+#define DEBUG_MEMORY
+
+using UnityEngine;
 using System.Collections;
+
 
 
 enum MaterialColors : int {
@@ -38,9 +42,14 @@ public struct Threshold
     public const int angleOneHand =40;
     public const int angleTwoHands = 30;
     public const int moveDirection = 45;
-    public const int centerAnglePushZ = 305;
+    public const int centerAnglePushX = -20;
+    public const int centerAnglePushZ = 300;
+    public const int centerAnglePullX = 0;
     public const int centerAnglePullZ = 240; //TODO calculate
     public const int centerAngleBouth = 0; //TODO calculate
+    public const int anglePushX = 30;
+    public const int anglePullX = 30;
+
 }
 
 public struct constant
@@ -67,7 +76,7 @@ public class globalDefinitions : MonoBehaviour {
     public string selectedObjectName = "";
     // Use this for initialization
     void Start () {
-	
+        
 	}
 	
 	// Update is called once per frame
