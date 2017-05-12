@@ -26,7 +26,7 @@ public class MoveAction : MonoBehaviour {
             case (int)HandMoves.LeftHandPush:
                 {
                     //TODO START SELECTION
-                    Debug.Log("LeftHandPush");
+                    //Debug.Log("LeftHandPush");
                     selector.GetComponent<Selector>().enabled = false;
                     target.SetActive(false);
                     return;

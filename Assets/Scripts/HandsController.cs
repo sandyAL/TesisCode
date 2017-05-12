@@ -93,14 +93,14 @@ public class HandsController : MonoBehaviour {
 
 
     //variable
-    float limInferiorPushAngleX = Threshold.centerAnglePushX -Threshold.anglePushX;
-    float limSuperiorPushAngleX = Threshold.centerAnglePushX + Threshold.anglePushX;
-    float limInferiorPushAngleZ = Threshold.centerAnglePushZ - Threshold.angleOneHand;
-    float limSuperiorPushAngleZ = Threshold.centerAnglePushZ + Threshold.angleOneHand;
-    float limInferiorPullAngleX = Threshold.centerAnglePullX - Threshold.anglePullX;
-    float limSuperiorPullAngleX = Threshold.centerAnglePullX - Threshold.anglePullX;
-    float limInferiorPullAngleZ = Threshold.centerAnglePullZ - Threshold.angleOneHand;
-    float limSuperiorPullAngleZ = Threshold.centerAnglePullZ + Threshold.angleOneHand;
+    //float limInferiorPushAngleX = Threshold.centerAnglePushX -Threshold.anglePushX;
+    //float limSuperiorPushAngleX = Threshold.centerAnglePushX + Threshold.anglePushX;
+    //float limInferiorPushAngleZ = Threshold.centerAnglePushZ - Threshold.angleOneHand;
+    //float limSuperiorPushAngleZ = Threshold.centerAnglePushZ + Threshold.angleOneHand;
+    //float limInferiorPullAngleX = Threshold.centerAnglePullX - Threshold.anglePullX;
+    ///float limSuperiorPullAngleX = Threshold.centerAnglePullX - Threshold.anglePullX;
+    //float limInferiorPullAngleZ = Threshold.centerAnglePullZ - Threshold.angleOneHand;
+    //float limSuperiorPullAngleZ = Threshold.centerAnglePullZ + Threshold.angleOneHand;
     
     public float limInferiorBothAngleRightHandX;
     public float limSuperiorBothAngleRightHandX;
@@ -129,22 +129,27 @@ public class HandsController : MonoBehaviour {
         bool orientationYPos = newStatus.handRotation[(int)Hand.Right].y > 270 || newStatus.handRotation[(int)Hand.Right].y < 90;
         bool angleNormalPos = newStatus.angleNormal > 0;
         //Debug.Log(newStatus.handRotation[(int)Hand.Right].y.ToString() + "  +  " + newStatus.angleNormal.ToString()+ "  =  "+ (newStatus.handRotation[(int)Hand.Right].y + newStatus.angleNormal).ToString() );
-        if (newStatus.handRotation[(int)Hand.Right].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < limSuperiorPushAngleZ 
+        //Debug.Log(Threshold.limInferiorPushAngleX.ToString() +"<"+ newStatus.handRotation[(int)Hand.Right].x.ToString() +"<"+ Threshold.limSuperiorPushAngleX.ToString());
+        //PUSH
+        if (newStatus.handRotation[(int)Hand.Right].z > Threshold.limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < Threshold.limSuperiorPushAngleZ 
             && (orientationYPos != angleNormalPos)
-           // && (newStatus.handRotation[(int)Hand.Right].x > limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Right].x < limSuperiorPushAngleX)
+            && (newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
             )
         {
             handTypePosition[(int)Hand.Right] = (int)HandRotationType.Push;
             return;
         }
-        if (newStatus.handRotation[(int)Hand.Right].z > limInferiorPullAngleZ && newStatus.handRotation[(int)Hand.Right].z < limSuperiorPullAngleZ 
+        //PULL
+        if (newStatus.handRotation[(int)Hand.Right].z > Threshold.limInferiorPullAngleZ && newStatus.handRotation[(int)Hand.Right].z < Threshold.limSuperiorPullAngleZ 
             && (orientationYPos == angleNormalPos)
-            //&& (newStatus.handRotation[(int)Hand.Right].x < -Threshold.anglePullX || newStatus.handRotation[(int)Hand.Right].x > 180- Threshold.anglePullX)
+            && (newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPullAngleX || newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPullAngleX)
             )
-        { 
+        {
+            //Debug.Log((newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPullAngleX) + " || " + (newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPullAngleX));
             handTypePosition[(int)Hand.Right] = (int)HandRotationType.Pull;  
             return;
         }
+        //BOTH
         if  (newStatus.handRotation[(int)Hand.Right].x > limInferiorBothAngleRightHandX && newStatus.handRotation[(int)Hand.Right].x < limSuperiorBothAngleRightHandX)
         {
             handTypePosition[(int)Hand.Right] = (int)HandRotationType.Both;
@@ -163,23 +168,26 @@ public class HandsController : MonoBehaviour {
 #endif
         bool orientationYPos = newStatus.handRotation[(int)Hand.Left].y > 270 || newStatus.handRotation[(int)Hand.Left].y < 90;
         bool angleNormalPos = newStatus.angleNormal > 0;
-        if (newStatus.handRotation[(int)Hand.Left].z > limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Left].z < limSuperiorPushAngleZ 
+        //Debug.Log(Threshold.limInferiorPushAngleX.ToString  Threshold.anglePushX)
+        //PUSH
+        if (newStatus.handRotation[(int)Hand.Left].z > Threshold.limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Left].z < Threshold.limSuperiorPushAngleZ 
             && (orientationYPos != angleNormalPos)
-            &&  (newStatus.handRotation[(int)Hand.Left].x > -Threshold.anglePushX && newStatus.handRotation[(int)Hand.Left].x <Threshold.anglePushX)
+            &&  (newStatus.handRotation[(int)Hand.Left].x > Threshold.limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Left].x <Threshold.limSuperiorPushAngleX)
             )
         {
             handTypePosition[(int)Hand.Left] = (int)HandRotationType.Push;
             return;
         }
-        if (newStatus.handRotation[(int)Hand.Left].z > limInferiorPullAngleZ && newStatus.handRotation[(int)Hand.Left].z < limSuperiorPullAngleZ 
+        //PULL
+        if (newStatus.handRotation[(int)Hand.Left].z > Threshold.limInferiorPullAngleZ && newStatus.handRotation[(int)Hand.Left].z < Threshold.limSuperiorPullAngleZ 
             && (orientationYPos == angleNormalPos)
-            && (newStatus.handRotation[(int)Hand.Left].x > -Threshold.anglePullX && newStatus.handRotation[(int)Hand.Left].x < Threshold.anglePullX)
+            && (newStatus.handRotation[(int)Hand.Left].x > Threshold.limInferiorPullAngleX || newStatus.handRotation[(int)Hand.Left].x < Threshold.limSuperiorPullAngleX)
             )
         {
             handTypePosition[(int)Hand.Left] = (int)HandRotationType.Pull;
             return;
         }
-
+        //BOTH
         if  (newStatus.handRotation[(int)Hand.Left].x > limInferiorBothAngleLeftHandX && newStatus.handRotation[(int)Hand.Left].x < limSuperiorBothAngleLeftHandX)
         {
             handTypePosition[(int)Hand.Left] = (int)HandRotationType.Both;
@@ -287,6 +295,7 @@ public class HandsController : MonoBehaviour {
         //  TWO HANDS
         if (newStatus.handMoving[(int)Hand.Right] && newStatus.handMoving[(int)Hand.Left])
         {
+            moveDetected = true;
             if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Both && handTypePosition[(int)Hand.Left] == (int)HandRotationType.Both)
             {
                 switch (newStatus.distance)
@@ -308,10 +317,6 @@ public class HandsController : MonoBehaviour {
                         }
                 }
             }
-            //TODO Add two hands detectiono move
-            moveDetected = true;
-            idMoveDetected = (int) HandMoves.None;
-            return;
         }
 
         // RIGHT HAND

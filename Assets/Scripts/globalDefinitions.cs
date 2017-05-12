@@ -37,8 +37,30 @@ public struct Threshold
 {
     public const double limInferiorVariance = 0.0001;
     public const double limSuperiorVariance = 0.0007;
+
     public const double limInferiorDistance = 0.001;
     public const double limSuperiorDistance = 0.01;
+
+    public const double limInferiorPushAngleX = -30;
+    public const double limSuperiorPushAngleX = 30;
+
+    public const double limInferiorPushAngleZ = 260;
+    public const double limSuperiorPushAngleZ = 340;
+
+    public const double limInferiorPullAngleX = 330;  //-30
+    public const double limSuperiorPullAngleX = 30;
+
+    public const double limInferiorPullAngleZ = 200;
+    public const double limSuperiorPullAngleZ = 280;
+
+    public const double limInferiorBothAngleRightHandX =0;
+    public const double limSuperiorBothAngleRightHandX = 0;
+
+    public const double limInferiorBothAngleLeftHandX = 0;
+    public const double limSuperiorBothAngleLeftHandX = 0;
+
+
+
     public const int angleOneHand =40;
     public const int angleTwoHands = 30;
     public const int moveDirection = 45;
