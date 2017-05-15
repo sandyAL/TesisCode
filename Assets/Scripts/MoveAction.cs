@@ -15,8 +15,9 @@ public class MoveAction : MonoBehaviour {
         selector = globalDef.GetComponent<globalDefinitions>().HeadCamera;
         target = globalDef.GetComponent<globalDefinitions>().Target;
     }
-	
 
+    public float stepPosition;
+    public Vector3 stepScale;
     private void OnMoveDetectedReceived(object sender, int idMoveDetected)
     {
 
@@ -50,29 +51,27 @@ public class MoveAction : MonoBehaviour {
         {
             case (int)HandMoves.RightHandPush:
                 {
-                    selectedObject.transform.position += new Vector3(direction.x / 50.0F, 0, direction.z / 50.0F);
+                    selectedObject.transform.position += new Vector3(direction.x / stepPosition, 0, direction.z / stepPosition);
                     return;
                 }
             case (int)HandMoves.RightHandPull:
                 {
-                    selectedObject.transform.position += new Vector3(direction.x / 20.0F, 0, direction.z / 20.0F);
+                    selectedObject.transform.position += new Vector3(direction.x / stepPosition, 0, direction.z / stepPosition);
                     return;
                 }
             case (int)HandMoves.ZoomIn:
                 {
-                    selectedObject.transform.localScale = 1.01F*selectedObject.transform.localScale;
+                    selectedObject.transform.localScale = stepScale - selectedObject.transform.localScale;
                     return;
                 }
             case (int)HandMoves.ZoomOut:
                 {
-                    selectedObject.transform.localScale = 0.9F * selectedObject.transform.localScale;
+                    selectedObject.transform.localScale = stepScale + selectedObject.transform.localScale;
                     return;
                 }
             case (int)HandMoves.Traslate:
                 {
-                    if (globalDef.GetComponent<globalDefinitions>().selectedObjectName == "")
-                        return;
-
+                    
                     return;
                 }
             case (int)HandMoves.None:

@@ -133,7 +133,8 @@ public class HandsController : MonoBehaviour {
         //PUSH
         if (newStatus.handRotation[(int)Hand.Right].z > Threshold.limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < Threshold.limSuperiorPushAngleZ 
             && (orientationYPos != angleNormalPos)
-            && (newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
+            //&& (newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
+            && (newStatus.handRotation[(int)Hand.Right].x > 360+Threshold.limInferiorPushAngleX || newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
             )
         {
             handTypePosition[(int)Hand.Right] = (int)HandRotationType.Push;
