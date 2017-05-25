@@ -61,7 +61,7 @@ public class MoveAction : MonoBehaviour {
                 }
             case (int)HandMoves.ZoomIn:
                 {
-                    selectedObject.transform.localScale = stepScale - selectedObject.transform.localScale;
+                    selectedObject.transform.localScale = 0.99F * selectedObject.transform.localScale; //- stepScale;
                     return;
                 }
             case (int)HandMoves.ZoomOut:

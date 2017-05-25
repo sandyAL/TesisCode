@@ -38,7 +38,7 @@ public struct Threshold
     public const double limInferiorVariance = 0.0001;
     public const double limSuperiorVariance = 0.0007;
 
-    public const double limInferiorDistance = 0.001;
+    public const double limInferiorDistance = -0.01;
     public const double limSuperiorDistance = 0.01;
 
     public const double limInferiorPushAngleX = -30;

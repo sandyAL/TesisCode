@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Xml;
-using System.Diagnostics;
+//using System.Diagnostics;
 public class DataReceived : MonoBehaviour {
 
     //Public GameObjects
@@ -43,7 +43,7 @@ public class DataReceived : MonoBehaviour {
     /*
     DEBUG
     */
-    Stopwatch timeDataReceived;
+    
 
     void Start()
     {
@@ -54,7 +54,6 @@ public class DataReceived : MonoBehaviour {
         Head = globalDef.GetComponent<globalDefinitions>().Head;
         HeadCamera = globalDef.GetComponent<globalDefinitions>().HeadCamera;
         samplePositions = new Vector3[3, constant.windowSize];
-        timeDataReceived = new Stopwatch();
     }
 
     // Packet received
@@ -159,25 +158,29 @@ public class DataReceived : MonoBehaviour {
             signAngle = 1;
         currentStatus.angleNormal = signAngle * (Mathf.Acos(Vector3.Dot(new Vector3(0, 0, 1), currentStatus.normal) / Vector3.Magnitude(currentStatus.normal))) * 180 / Mathf.PI;
 
+        //UPDATE distance
+        initialDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, (positionOnSampleArray + 1) % constant.windowSize], samplePositions[(int)Hand.Left, (positionOnSampleArray + 1) % constant.windowSize]);
+        finalDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, positionOnSampleArray], samplePositions[(int)Hand.Left, positionOnSampleArray]);
+        //differenceDistance = initialDistanceHands - finalDistanceHands;
+        differenceDistance = finalDistanceHands - initialDistanceHands;
+        //Debug.Log(differenceDistance);
+        if (differenceDistance < Threshold.limInferiorDistance)
+        {
+            currentStatus.distance = (int)Distance.Shorter;
+        }
+        else if (differenceDistance > Threshold.limSuperiorDistance)
+        {
+            currentStatus.distance = (int)Distance.Bigger;
+        }
+        else
+        {
+            currentStatus.distance = (int)Distance.Same;
+        }
+
         // Si he tenido el mismo estado por sameFrameWindowSize envio un actualizo el movimiento de las manos
         if (sendUpdate && countFramesEquals > constant.sameFrameWindowSize && UpdateHandsStatus != null)
         {
-            //UPDATE distance
-            initialDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, (positionOnSampleArray + 1) % constant.windowSize], samplePositions[(int)Hand.Left, (positionOnSampleArray + 1) % constant.windowSize]);
-            finalDistanceHands = Vector3.Distance(samplePositions[(int)Hand.Right, positionOnSampleArray], samplePositions[(int)Hand.Left, positionOnSampleArray]);
-            differenceDistance = initialDistanceHands - finalDistanceHands;
-            if (differenceDistance < Threshold.limInferiorDistance)
-            {
-                currentStatus.distance = (int)Distance.Shorter;
-            }
-            else if (differenceDistance > Threshold.limSuperiorDistance)
-            {
-                currentStatus.distance = (int)Distance.Bigger;
-            }
-            else
-            {
-                currentStatus.distance = (int)Distance.Same;
-            }
+            
 
             //TO-DO Update hand direction 
             //RIGHT HAND

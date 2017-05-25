@@ -22,7 +22,9 @@ enum HandRotationType : int
     None = 0,
     Push = 1,
     Pull = 2,
-    Both = 3
+    //Both = 3,
+    ZoomIn = 3,
+    ZoomOut = 4
 }
 
 enum HandMoves: int 
@@ -36,6 +38,7 @@ enum HandMoves: int
     ZoomOut=5,
     Traslate=6
 }
+
 public class HandStatus
 {
     public int id;
@@ -102,10 +105,19 @@ public class HandsController : MonoBehaviour {
     //float limInferiorPullAngleZ = Threshold.centerAnglePullZ - Threshold.angleOneHand;
     //float limSuperiorPullAngleZ = Threshold.centerAnglePullZ + Threshold.angleOneHand;
     
+        //TODO move to threshold
     public float limInferiorBothAngleRightHandX;
     public float limSuperiorBothAngleRightHandX;
     public float limInferiorBothAngleLeftHandX;
     public float limSuperiorBothAngleLeftHandX;
+    public float limInferiorZoomInAngleRightHandX;
+    public float limSuperiorZoomInAngleRightHandX;
+    public float limInferiorZoomInAngleLeftHandX;
+    public float limSuperiorZoomInAngleLeftHandX;
+    public float limInferiorZoomOutAngleRightHandX;
+    public float limSuperiorZoomOutAngleRightHandX;
+    public float limInferiorZoomOutAngleLeftHandX;
+    public float limSuperiorZoomOutAngleLeftHandX;
     //public float limInferiorPullAngleZ ;
     //public float limSuperiorPullAngleZ ;
 
@@ -133,7 +145,6 @@ public class HandsController : MonoBehaviour {
         //PUSH
         if (newStatus.handRotation[(int)Hand.Right].z > Threshold.limInferiorPushAngleZ && newStatus.handRotation[(int)Hand.Right].z < Threshold.limSuperiorPushAngleZ 
             && (orientationYPos != angleNormalPos)
-            //&& (newStatus.handRotation[(int)Hand.Right].x > Threshold.limInferiorPushAngleX && newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
             && (newStatus.handRotation[(int)Hand.Right].x > 360+Threshold.limInferiorPushAngleX || newStatus.handRotation[(int)Hand.Right].x < Threshold.limSuperiorPushAngleX)
             )
         {
@@ -151,12 +162,20 @@ public class HandsController : MonoBehaviour {
             return;
         }
         //BOTH
+        //ZoomIn
         if  (newStatus.handRotation[(int)Hand.Right].x > limInferiorBothAngleRightHandX && newStatus.handRotation[(int)Hand.Right].x < limSuperiorBothAngleRightHandX)
         {
-            handTypePosition[(int)Hand.Right] = (int)HandRotationType.Both;
+            handTypePosition[(int)Hand.Right] = (int)HandRotationType.ZoomIn;
             return; 
         }
+        //ZoomOut
+        if (newStatus.handRotation[(int)Hand.Right].x > limInferiorZoomOutAngleRightHandX && newStatus.handRotation[(int)Hand.Right].x < limSuperiorZoomOutAngleRightHandX)
+        {
+            handTypePosition[(int)Hand.Right] = (int)HandRotationType.ZoomOut;
+            return;
+        }
         handTypePosition[(int)Hand.Right] = (int)HandRotationType.None;
+        return;
 #if DEBUG_MEMORY
         Debug.Log("getRightRotationType_End");
 #endif
@@ -191,9 +210,16 @@ public class HandsController : MonoBehaviour {
         //BOTH
         if  (newStatus.handRotation[(int)Hand.Left].x > limInferiorBothAngleLeftHandX && newStatus.handRotation[(int)Hand.Left].x < limSuperiorBothAngleLeftHandX)
         {
-            handTypePosition[(int)Hand.Left] = (int)HandRotationType.Both;
+            handTypePosition[(int)Hand.Left] = (int)HandRotationType.ZoomIn;
             return; 
         }
+
+        if (newStatus.handRotation[(int)Hand.Left].x > limInferiorZoomOutAngleLeftHandX && newStatus.handRotation[(int)Hand.Left].x < limSuperiorZoomOutAngleLeftHandX)
+        {
+            handTypePosition[(int)Hand.Left] = (int)HandRotationType.ZoomOut;
+            return;
+        }
+
         handTypePosition[(int)Hand.Left] = (int)HandRotationType.None;
 #if DEBUG_MEMORY
         Debug.Log("getLeftRotationType_End");
@@ -213,7 +239,7 @@ public class HandsController : MonoBehaviour {
                 //case (int)HandMoves.LeftHandPull:
                 //case (int)HandMoves.ZoomIn:
                 //case (int)HandMoves.ZoomOut:
-                //case (int)HandMoves.Traslate:
+                case (int)HandMoves.Traslate:
                 case (int)HandMoves.None:
                     {
                         return materials[(int)MaterialColors.Silver];
@@ -239,10 +265,10 @@ public class HandsController : MonoBehaviour {
                     {
                         return materials[(int)MaterialColors.Orange];
                     }
-                case (int)HandMoves.Traslate:
+                /*case (int)HandMoves.Traslate:
                     {
                         return materials[(int)MaterialColors.Brown];
-                    }
+                    }*/
                 case (int)HandMoves.ZoomIn:
                     {
                         return materials[(int)MaterialColors.Pink];
@@ -276,9 +302,13 @@ public class HandsController : MonoBehaviour {
             {
                 return materials[(int)MaterialColors.MateOrange];
             }
-            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Both && handTypePosition[(int)Hand.Left] == (int)HandRotationType.Both)// && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.ZoomIn && handTypePosition[(int)Hand.Left] == (int)HandRotationType.ZoomIn)// && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
             {
-                return materials[(int)MaterialColors.MateBrown];
+                return materials[(int)MaterialColors.MatePink];
+            }
+            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.ZoomOut && handTypePosition[(int)Hand.Left] == (int)HandRotationType.ZoomOut)// && (handTypePosition[(int)Hand.Left] == (int)HandRotationType.None))
+            {
+                return materials[(int)MaterialColors.MatePurple];
             }
             return materials[(int)MaterialColors.MateWhite];        
         }
@@ -297,18 +327,24 @@ public class HandsController : MonoBehaviour {
         if (newStatus.handMoving[(int)Hand.Right] && newStatus.handMoving[(int)Hand.Left])
         {
             moveDetected = true;
-            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Both && handTypePosition[(int)Hand.Left] == (int)HandRotationType.Both)
-            {
+            //if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.Both && handTypePosition[(int)Hand.Left] == (int)HandRotationType.Both)
+            //{
                 switch (newStatus.distance)
                 {
                     case (int)Distance.Bigger:
                         {
-                            idMoveDetected = (int)HandMoves.ZoomOut;
+                            if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.ZoomOut && handTypePosition[(int)Hand.Left] == (int)HandRotationType.ZoomOut)
+                                { 
+                                idMoveDetected = (int)HandMoves.ZoomOut;
+                                }
                             break;
                         }
                     case (int)Distance.Shorter:
                         {
+                        if (handTypePosition[(int)Hand.Right] == (int)HandRotationType.ZoomIn && handTypePosition[(int)Hand.Left] == (int)HandRotationType.ZoomIn)
+                            {
                             idMoveDetected = (int)HandMoves.ZoomIn;
+                            }
                             break;
                         }
                     case (int)Distance.Same:
@@ -317,7 +353,7 @@ public class HandsController : MonoBehaviour {
                             break;
                         }
                 }
-            }
+            //}
         }
 
         // RIGHT HAND
