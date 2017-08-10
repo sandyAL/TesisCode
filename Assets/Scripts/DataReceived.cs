@@ -33,6 +33,7 @@ public class DataReceived : MonoBehaviour {
     Vector3[,] samplePositions; //Guarda las ultimas windowSize posiciones de las manos [2,windowSize]
     Vector3[] averagePosition = new Vector3[3]; //Average of the saved positions
     double sampleVariance;
+    public double rightHandVariance;
     int countFramesEquals = 0;
     int IDStatus = 0;
     float initialDistanceHands;
@@ -104,8 +105,8 @@ public class DataReceived : MonoBehaviour {
             currentStatus.handPosition[k] = newPosition;
             currentStatus.handRotation[k] = newOrientation.eulerAngles;
 
+if (k == 0) { rightHandVariance = sampleVariance; }
             //UPDATE Hand moving
-            
             if (sampleVariance > Threshold.limInferiorVariance)
             {
                 //hand is now moving
@@ -142,7 +143,8 @@ public class DataReceived : MonoBehaviour {
             float y = (float)System.Convert.ToDouble(rigidBodiesList[headId].Attributes["y"].InnerText) * constant.factor;
             float z = (float)System.Convert.ToDouble(rigidBodiesList[headId].Attributes["z"].InnerText) * constant.factor;
             headPosition = new Vector3(-x, (float)(y - constant.headSize), z);
-            Head.transform.position = headPosition;
+            //Debug.Log((-0.1F) * HeadCamera.transform.forward);
+            Head.transform.position = headPosition+ (-0.1F) * HeadCamera.transform.forward;
             //TODO revisar cual de las dos instrucciones se ve mejor
             //head.transform.position = Vector3.MoveTowards(head.transform.position, position, speed * Time.deltaTime);
         }
